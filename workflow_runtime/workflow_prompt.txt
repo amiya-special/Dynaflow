@@ -1,0 +1,86 @@
+Execute an inline JavaScript workflow that orchestrates subagents. The tool starts execution and returns a task ID. Use TaskOutput to wait for the workflow and read its actual returned result; use TaskStop to stop it when appropriate.
+
+Follow the task's execution policy: dynamic tasks permit DIRECT or WORKFLOW, while forced tasks require WORKFLOW. Keep the workflow's scale proportional to the question. The main agent plans and assesses the workflow; substantive research, calculations, and verification belong to its subagents when the task requires them.
+
+# Inputs
+- script: a self-contained JavaScript workflow, supplied inline.
+- args: an optional JSON value available as the script's args variable. Pass objects and arrays as real JSON values, not JSON-encoded strings.
+- description: an optional short description of the invocation.
+- maxConcurrency: an optional cap on concurrent agent calls. The default is 3; supported values are integers from 1 to 16. Calls beyond the cap wait for a free slot.
+- resumeFromRunId: an optional task ID for a completed, failed, or stopped workflow in the same question session. See Resume below.
+
+# Script execution
+The script is an async function body, not an ES module. Use plain JavaScript, not TypeScript. The engine supplies agent, parallel, pipeline, phase, log, workflow, args, and budget; use them directly. Do not use imports, require, Node.js APIs, or direct filesystem/network access in the script. Perform external work through the subagents' tools.
+
+Begin with exactly one pure literal metadata declaration:
+
+export const meta = {
+  name: 'research-question',
+  description: 'Research the question and verify the result',
+  phases: [{ title: 'Research' }, { title: 'Verify' }]
+}
+
+Required metadata fields are name and description. phases is optional; use matching titles in phase() or agent's phase option to group progress records. An optional resultSchema specifies a JSON Schema for the workflow's final return value.
+
+The metadata must not reference variables or use function calls, spreads, or template interpolation. Do not add other export or export default statements. Use a top-level return to deliver the result. Type annotations, interfaces, and generics are unsupported.
+
+Standard JavaScript values and operations are available. Date.now(), Math.random(), and new Date() without arguments are unavailable because they make journal replay nondeterministic. Pass any required timestamps or random values through args.
+
+# Subagents and control flow
+- agent(prompt, opts?): spawn a subagent and await its final result. Supported options include label, phase, schema, and allowedTools. The subagent uses the configured model. Supply the complete task and necessary context in its prompt.
+  - Without schema, the return value is the subagent's final text.
+  - With schema, the subagent delivers through StructuredOutput and the result is validated against that JSON Schema. agent() returns the validated object directly; do not parse it again.
+  - allowedTools, when provided, selects a subset of the configured subagent tool names.
+  - A failed or cancelled subagent can return null. Check results before using them; do not treat missing output as a successful finding.
+- pipeline(items, stage1, stage2, ...): run each item through the stages independently. Each stage receives (previousResult, originalItem, index). One item can start its next stage while another is still in an earlier stage. A throwing stage yields null for that item and skips its remaining stages.
+- parallel(thunks): run an array of functions concurrently and await all results. A throwing function yields null in the result array. Use this barrier when a later step needs the complete result set.
+- phase(title): assign a phase to subsequent agent calls and emit a progress record. For concurrent pipeline stages, pass phase explicitly to agent to avoid races over the shared current phase.
+- log(message): record a progress message.
+- workflow({script, args?}): execute another inline JavaScript workflow and return its result. The child shares the parent's concurrency cap, agent counter, journal, abort signal, and token accounting. Its args field becomes the child's args variable. Only one level of nesting is supported; a child cannot call workflow again. Supply the child script directly, not a name or file path.
+- budget: exposes total, spent(), and remaining(). This host sets total to null and imposes no token target through this object, so remaining() is Infinity. Do not use budget.remaining() alone as a loop termination condition.
+
+A workflow may call agent at most 1000 times. Each parallel or pipeline call accepts at most 4096 items. These are error limits, not suggested task sizes. Keep loops bounded by meaningful completion conditions and check failures explicitly.
+
+# Choosing a workflow
+Use pipeline when independent items each require several stages. Use parallel followed by a shared step when that step needs all previous results, such as merging evidence, comparing independent solutions, or resolving disagreements.
+
+For example, verify each research result as soon as it is available:
+
+export const meta = {
+  name: 'research-and-verify',
+  description: 'Research independent aspects and verify each finding',
+  phases: [{ title: 'Research' }, { title: 'Verify' }, { title: 'Synthesize' }]
+}
+const checked = await pipeline(
+  args.aspects,
+  aspect => agent(
+    `Question: ${args.question}\nResearch this aspect: ${aspect}. Return findings and supporting sources.`,
+    {label: `research:${aspect}`, phase: 'Research'}
+  ),
+  (finding, aspect) => {
+    if (!finding) return null
+    return agent(
+      `Question: ${args.question}\nIndependently check this finding about ${aspect}:\n${finding}\nReturn supported conclusions and unresolved issues.`,
+      {label: `verify:${aspect}`, phase: 'Verify'}
+    )
+  }
+)
+const valid = checked.filter(Boolean)
+if (valid.length !== args.aspects.length) throw new Error('Some research or verification stages failed')
+phase('Synthesize')
+return await agent(
+  `Answer the original question using the checked evidence.\nQuestion: ${args.question}\nEvidence:\n${valid.join('\n\n')}`,
+  {label: 'synthesize'}
+)
+
+For a short question, a single well-specified agent call can be sufficient. For questions requiring stronger verification, consider independent solution attempts, a verifier prompted to find errors, or a final completeness check. Use different perspectives when they can expose different failure modes. Do not add stages merely to increase agent count.
+
+When coverage is bounded or a result is missing, record the limitation and return it explicitly. Do not silently discard failures and then claim complete coverage. When using schemas, make the final result's required evidence and uncertainty fields explicit.
+
+# Resume
+Use resumeFromRunId only for a terminal workflow in the current question session. The host retains its previous invocation, so script and args can be omitted to resume it unchanged. Supply a new inline script if revising the workflow.
+
+For an unchanged script, matching recorded agent calls replay from the journal, including failed calls whose return value is null. Resuming an unchanged invocation does not automatically retry those failures. Mismatching calls invalidate subsequent replay; changing the script invalidates the previous journal and executes again. Supply a revised inline script when failed recorded calls need to run again. Do not assume that a modified workflow will return cached results.
+
+# Reading results
+TaskOutput returns execution status, result validity, and the returned value. A running status is not a completed answer. A failed or invalid result requires investigation or a revised workflow. Use a valid returned result as the evidence for the final answer instead of independently re-solving the question or launching a duplicate workflow.

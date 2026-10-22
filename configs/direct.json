@@ -1,0 +1,25 @@
+{
+  "mode": "direct",
+  "profile": "direct",
+  "model": "your-model-name",
+  "model_adapter": "openai",
+  "api_key_env": "DYNAFLOW_API_KEY",
+  "parameters": {
+    "max_tokens": 81920,
+    "temperature": 1.0,
+    "top_p": 0.95
+  },
+  "seed": 42,
+  "seed_strategy": "per_question",
+  "extra_body": {},
+  "servers": [
+    {
+      "id": "main",
+      "url": "http://127.0.0.1:8000/v1",
+      "concurrency": 1
+    }
+  ],
+  "question_order": null,
+  "question_deadline_seconds": null,
+  "training_stage": "unspecified"
+}

@@ -1,0 +1,8 @@
+{
+  "template": "\nWeb page content:\n---\n${markdownContent}\n---\n\n${prompt}\n\n${guidelines}\n",
+  "guidelines": "Provide a concise response based only on the content above. In your response:\n - Enforce a strict 125-character maximum for quotes from any source document. Open Source Software is ok as long as we respect the license.\n - Use quotation marks for exact language from articles; any language outside of the quotation should never be word-for-word the same.\n - You are not a lawyer and never comment on the legality of your own prompts and responses.\n - Never produce or reproduce exact song lyrics.",
+  "max_markdown_utf16_units": 100000,
+  "cache_ttl_seconds": 900,
+  "cache_max_bytes": 52428800,
+  "fetch_timeout_seconds": 60
+}

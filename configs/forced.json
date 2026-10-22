@@ -1,0 +1,39 @@
+{
+  "mode": "forced",
+  "profile": "forced",
+  "model": "your-model-name",
+  "model_adapter": "openai",
+  "api_key_env": "DYNAFLOW_API_KEY",
+  "parameters": {
+    "max_tokens": 81920,
+    "temperature": 1.0,
+    "top_p": 0.95
+  },
+  "seed": 42,
+  "seed_strategy": "fixed",
+  "extra_body": {},
+  "servers": [
+    {
+      "id": "main",
+      "url": "http://127.0.0.1:8000/v1",
+      "concurrency": 1
+    }
+  ],
+  "question_order": null,
+  "question_deadline_seconds": null,
+  "training_stage": "unspecified",
+  "subagent_model": null,
+  "subagent_adapter": null,
+  "subagent_parameters": null,
+  "subagent_extra_body": {},
+  "workflow": {
+    "backend": "portable",
+    "engine_mode": "docker",
+    "container_image": "node:24.14.0-bookworm-slim",
+    "cloud_url": null,
+    "cloud_key_env": null,
+    "tools": [],
+    "tool_service_url": null,
+    "tool_key_env": "DYNAFLOW_TOOL_API_KEY"
+  }
+}

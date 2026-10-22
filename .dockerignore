@@ -1,0 +1,6 @@
+**
+!requirements.txt
+!tool_runtime/
+tool_runtime/**
+!tool_runtime/Dockerfile
+!tool_runtime/execute.py
