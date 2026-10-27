@@ -1,6 +1,8 @@
 <div align="center">
 <h1><a href="https://arxiv.org/abs/2610.34467">DynaFlow: Learning Free-Form Multi-Agent Orchestration</a></h1>
-<p>Ruhao Liu&emsp;Qi Li&emsp;Shizun Wang&emsp;Xinchao Wang</p>
+<p>Ruhao Liu<sup>&ddagger;</sup>&emsp;Qi Li<sup>&ddagger;</sup>&emsp;Shizun Wang<sup>&sect;</sup>&emsp;Xinchao Wang<sup>&dagger;</sup></p>
+<p><a href="https://sites.google.com/view/xml-nus/people?authuser=0">xML-Lab</a>, National University of Singapore</p>
+<p><sup>&ddagger;</sup>共同贡献&emsp;<sup>&sect;</sup>项目负责人（Project Lead）&emsp;<sup>&dagger;</sup>通讯作者</p>
 <p><a href="https://arxiv.org/abs/2610.34467">论文</a> · <a href="https://amiya-special.github.io/DynaFlow-website/zh.html">项目主页</a> · <a href="https://huggingface.co/papers/2610.34467">Hugging Face</a></p>
 </div>
 
