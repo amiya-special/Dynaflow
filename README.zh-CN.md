@@ -1,7 +1,7 @@
 <div align="center">
 <h1><a href="https://arxiv.org/abs/2610.34467">DynaFlow: Learning Free-Form Multi-Agent Orchestration</a></h1>
 <p>Ruhao Liu&emsp;Qi Li&emsp;Shizun Wang&emsp;Xinchao Wang</p>
-<p><a href="https://arxiv.org/abs/2610.34467">论文</a> · <a href="https://amiya-special.github.io/DynaFlow-website/zh.html">项目主页</a></p>
+<p><a href="https://arxiv.org/abs/2610.34467">论文</a> · <a href="https://amiya-special.github.io/DynaFlow-website/zh.html">项目主页</a> · <a href="https://huggingface.co/papers/2610.34467">Hugging Face</a></p>
 </div>
 
 [English](README.md) | 简体中文
