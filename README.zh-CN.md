@@ -1,4 +1,8 @@
-# DynaFlow
+<div align="center">
+<h1><a href="https://arxiv.org/abs/2610.34467">DynaFlow: Learning Free-Form Multi-Agent Orchestration</a></h1>
+<p>Ruhao Liu&emsp;Qi Li&emsp;Shizun Wang&emsp;Xinchao Wang</p>
+<p><a href="https://arxiv.org/abs/2610.34467">论文</a> · <a href="https://amiya-special.github.io/DynaFlow-website/zh.html">项目主页</a></p>
+</div>
 
 [English](README.md) | 简体中文
 
@@ -73,6 +77,19 @@ python scripts/dynaflow.py demo --mode forced
 | `workflows/`、`tools/` | 调用 Workflow 和工具时生成的执行记录 |
 
 再次运行时，用 `--out runs/my-demo` 指定新的目录。
+
+## 引用
+
+如果本研究或代码对你有所帮助，欢迎引用我们的论文：
+
+```bibtex
+@article{liu2026dynaflow,
+  title={DynaFlow: Learning Free-Form Multi-Agent Orchestration},
+  author={Liu, Ruhao and Li, Qi and Wang, Shizun and Wang, Xinchao},
+  journal={arXiv preprint arXiv:2610.34467},
+  year={2026}
+}
+```
 
 ## 许可证
 

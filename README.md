@@ -1,4 +1,8 @@
-# DynaFlow
+<div align="center">
+<h1><a href="https://arxiv.org/abs/2610.34467">DynaFlow: Learning Free-Form Multi-Agent Orchestration</a></h1>
+<p>Ruhao Liu&emsp;Qi Li&emsp;Shizun Wang&emsp;Xinchao Wang</p>
+<p><a href="https://arxiv.org/abs/2610.34467">Paper</a> · <a href="https://amiya-special.github.io/DynaFlow-website/">Project Page</a></p>
+</div>
 
 English | [简体中文](README.zh-CN.md)
 
@@ -73,6 +77,19 @@ Results are saved under `runs/demo-<mode>/`:
 | `workflows/`, `tools/` | Workflow and tool execution records, when used |
 
 To run again, select a new directory with `--out runs/my-demo`.
+
+## Citation
+
+If you find our work or this codebase helpful, please cite our paper:
+
+```bibtex
+@article{liu2026dynaflow,
+  title={DynaFlow: Learning Free-Form Multi-Agent Orchestration},
+  author={Liu, Ruhao and Li, Qi and Wang, Shizun and Wang, Xinchao},
+  journal={arXiv preprint arXiv:2610.34467},
+  year={2026}
+}
+```
 
 ## License
 
